@@ -1,0 +1,6 @@
+/.agent
+.env
+.vscode
+.idea
+.DS_Store
+/covoitapi*
