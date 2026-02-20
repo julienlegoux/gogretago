@@ -2,6 +2,7 @@ package brand
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/lgxju/gogretago/internal/domain/entities"
@@ -32,4 +33,35 @@ func TestListBrands_Success(t *testing.T) {
 	assert.Equal(t, 2, result.Meta.Total)
 	assert.Equal(t, 1, result.Meta.Page)
 	assert.Equal(t, 20, result.Meta.Limit)
+}
+
+func TestListBrands_Empty(t *testing.T) {
+	ctx := context.Background()
+	params := entities.PaginationParams{Page: 1, Limit: 20}
+
+	brandRepo := mocks.NewMockBrandRepository(t)
+	brandRepo.EXPECT().FindAll(mock.Anything, 0, 20).Return([]entities.Brand{}, 0, nil)
+
+	uc := NewListBrandsUseCase(brandRepo)
+	result, err := uc.Execute(ctx, params)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Empty(t, result.Data)
+	assert.Equal(t, 0, result.Meta.Total)
+	assert.Equal(t, 0, result.Meta.TotalPages)
+}
+
+func TestListBrands_RepoError(t *testing.T) {
+	ctx := context.Background()
+	params := entities.PaginationParams{Page: 1, Limit: 20}
+
+	brandRepo := mocks.NewMockBrandRepository(t)
+	brandRepo.EXPECT().FindAll(mock.Anything, 0, 20).Return(nil, 0, fmt.Errorf("database connection failed"))
+
+	uc := NewListBrandsUseCase(brandRepo)
+	result, err := uc.Execute(ctx, params)
+
+	assert.Error(t, err)
+	assert.Nil(t, result)
 }

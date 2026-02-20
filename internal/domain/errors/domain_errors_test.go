@@ -2,6 +2,7 @@ package errors
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -210,7 +211,14 @@ func TestDomainErrors_EmbedDomainError(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.NotEmpty(t, tt.err.Error())
-			assert.Equal(t, tt.code, tt.code)
+			// Extract the embedded DomainError.Code field via reflection
+			val := reflect.ValueOf(tt.err)
+			if val.Kind() == reflect.Ptr {
+				val = val.Elem()
+			}
+			codeField := val.FieldByName("Code")
+			assert.True(t, codeField.IsValid(), "expected Code field on %T", tt.err)
+			assert.Equal(t, tt.code, codeField.String())
 		})
 	}
 }
@@ -222,4 +230,58 @@ func TestDomainError_WorksWithErrorsAs(t *testing.T) {
 	assert.True(t, errors.As(plainErr, &target))
 	assert.Equal(t, "USER_NOT_FOUND", target.Code)
 	assert.Equal(t, "User not found: 1", target.Message)
+}
+
+func TestConcreteErrors_ErrorsAs_DoesNotMatchDomainError(t *testing.T) {
+	// Concrete typed errors embed DomainError by VALUE, so errors.As
+	// with a *DomainError target does NOT match them. This is important
+	// to document as expected behavior since the error handler relies on
+	// receiving plain *DomainError values.
+	concreteErrors := []error{
+		NewUserAlreadyExistsError("a@b.com"),
+		NewInvalidCredentialsError(),
+		NewUserNotFoundError("1"),
+		NewCarNotFoundError("1"),
+		NewTripNotFoundError("1"),
+	}
+
+	for _, err := range concreteErrors {
+		var target *DomainError
+		assert.False(t, errors.As(err, &target),
+			"errors.As should NOT match %T to *DomainError (embedded by value)", err)
+	}
+}
+
+func TestConcreteErrors_ErrorsAs_MatchOwnType(t *testing.T) {
+	// Each concrete error type should be matchable via errors.As to its own type
+	t.Run("UserAlreadyExistsError", func(t *testing.T) {
+		err := NewUserAlreadyExistsError("a@b.com")
+		var target *UserAlreadyExistsError
+		assert.True(t, errors.As(err, &target))
+		assert.Equal(t, "USER_ALREADY_EXISTS", target.Code)
+	})
+	t.Run("UserNotFoundError", func(t *testing.T) {
+		err := NewUserNotFoundError("1")
+		var target *UserNotFoundError
+		assert.True(t, errors.As(err, &target))
+		assert.Equal(t, "USER_NOT_FOUND", target.Code)
+	})
+	t.Run("CarNotFoundError", func(t *testing.T) {
+		err := NewCarNotFoundError("1")
+		var target *CarNotFoundError
+		assert.True(t, errors.As(err, &target))
+		assert.Equal(t, "CAR_NOT_FOUND", target.Code)
+	})
+	t.Run("ForbiddenError", func(t *testing.T) {
+		err := NewForbiddenError("res", "1")
+		var target *ForbiddenError
+		assert.True(t, errors.As(err, &target))
+		assert.Equal(t, "FORBIDDEN", target.Code)
+	})
+	t.Run("ColorAlreadyExistsError", func(t *testing.T) {
+		err := NewColorAlreadyExistsError("Red")
+		var target *ColorAlreadyExistsError
+		assert.True(t, errors.As(err, &target))
+		assert.Equal(t, "COLOR_ALREADY_EXISTS", target.Code)
+	})
 }

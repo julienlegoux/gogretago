@@ -2,6 +2,7 @@ package inscription
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/lgxju/gogretago/internal/domain/entities"
@@ -45,4 +46,18 @@ func TestListUserInscriptions_Empty(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Empty(t, result)
+}
+
+func TestListUserInscriptions_RepoError(t *testing.T) {
+	ctx := context.Background()
+	userID := "user-1"
+
+	inscriptionRepo := mocks.NewMockInscriptionRepository(t)
+	inscriptionRepo.EXPECT().FindByUserID(mock.Anything, userID).Return(nil, fmt.Errorf("database connection failed"))
+
+	uc := NewListUserInscriptionsUseCase(inscriptionRepo)
+	result, err := uc.Execute(ctx, userID)
+
+	assert.Error(t, err)
+	assert.Nil(t, result)
 }
