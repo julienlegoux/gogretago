@@ -2,10 +2,10 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/lgxju/gogretago/config"
+	"github.com/lgxju/gogretago/internal/lib/shared"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -148,13 +148,17 @@ var db *gorm.DB
 // Connect establishes a connection to the PostgreSQL database
 func Connect() (*gorm.DB, error) {
 	cfg := config.Get()
+	isDevelopment := cfg.AppEnv == "development"
+	appLogger := shared.NewLogger(isDevelopment)
+	dbLogger := appLogger.Child(map[string]interface{}{"component": "gorm"})
 
-	gormConfig := &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error),
+	gormLogLevel := logger.Error
+	if isDevelopment {
+		gormLogLevel = logger.Info
 	}
 
-	if cfg.AppEnv == "development" {
-		gormConfig.Logger = logger.Default.LogMode(logger.Info)
+	gormConfig := &gorm.Config{
+		Logger: newGormLogger(dbLogger, gormLogLevel),
 	}
 
 	var err error
@@ -163,7 +167,7 @@ func Connect() (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	log.Println("Database connection established")
+	appLogger.Info("Database connection established", nil)
 	return db, nil
 }
 

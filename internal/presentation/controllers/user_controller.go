@@ -47,8 +47,22 @@ func (ctrl *UserController) ListUsers(c *gin.Context) {
 }
 
 // GetUser handles GET /users/:id
+// Users can only view their own profile unless they have ADMIN role.
 func (ctrl *UserController) GetUser(c *gin.Context) {
 	id := c.Param("id")
+	requestingUserID := c.GetString("userId")
+	role := c.GetString("role")
+
+	if id != requestingUserID && role != "ADMIN" {
+		c.JSON(http.StatusForbidden, gin.H{
+			"success": false,
+			"error": gin.H{
+				"code":    "FORBIDDEN",
+				"message": "Insufficient permissions",
+			},
+		})
+		return
+	}
 
 	result, err := ctrl.getUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
