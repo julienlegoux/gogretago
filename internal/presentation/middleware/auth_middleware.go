@@ -11,13 +11,21 @@ import (
 // AuthMiddleware validates JWT tokens and sets user context
 func AuthMiddleware(jwtService services.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("x-auth-token")
+		// Try Authorization header first, then x-auth-token
+		authHeader := c.GetHeader("Authorization")
+		token := ""
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			token = authHeader[7:]
+		}
+		if token == "" {
+			token = c.GetHeader("x-auth-token")
+		}
 
 		if token == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"success": false,
 				"error": gin.H{
-					"code":    "MISSING_TOKEN",
+					"code":    "UNAUTHORIZED",
 					"message": "Authentication token is required",
 				},
 			})
@@ -25,7 +33,7 @@ func AuthMiddleware(jwtService services.JwtService) gin.HandlerFunc {
 			return
 		}
 
-		// Remove "Bearer " prefix if present
+		// Remove "Bearer " prefix if still present
 		token = strings.TrimPrefix(token, "Bearer ")
 
 		payload, err := jwtService.Verify(token)
@@ -42,6 +50,7 @@ func AuthMiddleware(jwtService services.JwtService) gin.HandlerFunc {
 		}
 
 		c.Set("userId", payload.UserID)
+		c.Set("role", payload.Role)
 		c.Next()
 	}
 }

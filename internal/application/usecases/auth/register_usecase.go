@@ -10,33 +10,29 @@ import (
 	"github.com/lgxju/gogretago/internal/domain/services"
 )
 
-// RegisterUseCase handles user registration logic
 type RegisterUseCase struct {
-	userRepository  repositories.UserRepository
+	authRepository  repositories.AuthRepository
 	passwordService services.PasswordService
 	emailService    services.EmailService
 	jwtService      services.JwtService
 }
 
-// NewRegisterUseCase creates a new RegisterUseCase with its dependencies
 func NewRegisterUseCase(
-	userRepository repositories.UserRepository,
+	authRepository repositories.AuthRepository,
 	passwordService services.PasswordService,
 	emailService services.EmailService,
 	jwtService services.JwtService,
 ) *RegisterUseCase {
 	return &RegisterUseCase{
-		userRepository:  userRepository,
+		authRepository:  authRepository,
 		passwordService: passwordService,
 		emailService:    emailService,
 		jwtService:      jwtService,
 	}
 }
 
-// Execute performs the registration use case
 func (uc *RegisterUseCase) Execute(ctx context.Context, input dtos.RegisterInput) (*dtos.AuthResponse, error) {
-	// Check if user already exists
-	exists, err := uc.userRepository.ExistsByEmail(ctx, input.Email)
+	exists, err := uc.authRepository.ExistsByEmail(ctx, input.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -44,29 +40,27 @@ func (uc *RegisterUseCase) Execute(ctx context.Context, input dtos.RegisterInput
 		return nil, domainerrors.NewUserAlreadyExistsError(input.Email)
 	}
 
-	// Hash password
 	hashedPassword, err := uc.passwordService.Hash(input.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create user
-	user, err := uc.userRepository.Create(ctx, entities.CreateUserData{
-		Email:     input.Email,
-		Password:  hashedPassword,
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		Phone:     input.Phone,
-	})
+	auth, user, err := uc.authRepository.CreateWithUser(ctx,
+		entities.CreateAuthData{Email: input.Email, Password: hashedPassword},
+		entities.CreateUserData{FirstName: nil, LastName: nil, Phone: nil},
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	// Send welcome email (fire and forget, don't fail registration)
-	_ = uc.emailService.SendWelcomeEmail(user.Email, user.FirstName)
+	// Send welcome email (fire and forget)
+	name := "there"
+	if user.FirstName != nil {
+		name = *user.FirstName
+	}
+	_ = uc.emailService.SendWelcomeEmail(auth.Email, name)
 
-	// Generate JWT token
-	token, err := uc.jwtService.Sign(services.JwtPayload{UserID: user.ID})
+	token, err := uc.jwtService.Sign(services.JwtPayload{UserID: user.ID, Role: auth.Role})
 	if err != nil {
 		return nil, err
 	}

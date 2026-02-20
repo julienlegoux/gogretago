@@ -8,8 +8,10 @@ import (
 
 // UserRepository defines the interface for user persistence operations
 type UserRepository interface {
-	FindByID(ctx context.Context, id string) (*entities.User, error)
-	FindByEmail(ctx context.Context, email string) (*entities.User, error)
-	Create(ctx context.Context, data entities.CreateUserData) (*entities.User, error)
-	ExistsByEmail(ctx context.Context, email string) (bool, error)
+	FindAll(ctx context.Context) ([]entities.PublicUser, error)
+	FindByID(ctx context.Context, id string) (*entities.PublicUser, error)
+	FindByAuthRefID(ctx context.Context, authRefID int64) (*entities.PublicUser, error)
+	Update(ctx context.Context, id string, data entities.UpdateUserData) (*entities.PublicUser, error)
+	Delete(ctx context.Context, id string) error
+	Anonymize(ctx context.Context, id string) error
 }

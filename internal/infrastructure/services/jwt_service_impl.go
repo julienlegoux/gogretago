@@ -26,14 +26,17 @@ func NewJwtService() services.JwtService {
 	}
 }
 
-// Sign creates a new JWT token
+// Sign creates a new JWT token with userId and role
 func (s *JwtServiceImpl) Sign(payload services.JwtPayload) (string, error) {
 	exp := s.calculateExpiration()
 
 	claims := jwt.MapClaims{
 		"userId": payload.UserID,
+		"role":   payload.Role,
 		"exp":    exp,
 		"iat":    time.Now().Unix(),
+		"iss":    "covoitapi",
+		"aud":    "covoitapi",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -56,9 +59,15 @@ func (s *JwtServiceImpl) Verify(tokenString string) (*services.JwtPayload, error
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userID, ok := claims["userId"].(string)
 		if !ok {
-			return nil, fmt.Errorf("invalid token payload")
+			return nil, fmt.Errorf("invalid token payload: missing userId")
 		}
-		return &services.JwtPayload{UserID: userID}, nil
+
+		role, _ := claims["role"].(string)
+		if role == "" {
+			role = "USER"
+		}
+
+		return &services.JwtPayload{UserID: userID, Role: role}, nil
 	}
 
 	return nil, fmt.Errorf("invalid token")
