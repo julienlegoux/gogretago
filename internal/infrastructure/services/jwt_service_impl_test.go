@@ -18,11 +18,14 @@ func setupJwtEnv(t *testing.T, expiresIn string) {
 	t.Helper()
 	os.Setenv("JWT_SECRET", testJWTSecret)
 	os.Setenv("JWT_EXPIRES_IN", expiresIn)
+	os.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/testdb")
 	// Reset the config so it reloads from env
-	config.Load()
+	_, err := config.Load()
+	require.NoError(t, err)
 	t.Cleanup(func() {
 		os.Unsetenv("JWT_SECRET")
 		os.Unsetenv("JWT_EXPIRES_IN")
+		os.Unsetenv("DATABASE_URL")
 	})
 }
 

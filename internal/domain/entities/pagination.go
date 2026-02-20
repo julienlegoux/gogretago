@@ -39,10 +39,14 @@ type PaginatedResult[T any] struct {
 
 // BuildPaginationMeta creates pagination metadata from params and total count
 func BuildPaginationMeta(params PaginationParams, total int) PaginationMeta {
+	totalPages := 0
+	if params.Limit > 0 {
+		totalPages = int(math.Ceil(float64(total) / float64(params.Limit)))
+	}
 	return PaginationMeta{
 		Page:       params.Page,
 		Limit:      params.Limit,
 		Total:      total,
-		TotalPages: int(math.Ceil(float64(total) / float64(params.Limit))),
+		TotalPages: totalPages,
 	}
 }
