@@ -41,7 +41,7 @@ func (ctrl *InscriptionController) ListInscriptions(c *gin.Context) {
 
 	result, err := ctrl.listUseCase.Execute(c.Request.Context(), params)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -86,7 +86,7 @@ func (ctrl *InscriptionController) CreateInscription(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), userID, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (ctrl *InscriptionController) DeleteInscription(c *gin.Context) {
 
 	err := ctrl.deleteUseCase.Execute(c.Request.Context(), id, userID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -116,7 +116,7 @@ func (ctrl *InscriptionController) ListUserInscriptions(c *gin.Context) {
 
 	result, err := ctrl.listUserInscriptionsUseCase.Execute(c.Request.Context(), userID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -132,7 +132,7 @@ func (ctrl *InscriptionController) ListTripPassengers(c *gin.Context) {
 
 	result, err := ctrl.listTripPassengersUseCase.Execute(c.Request.Context(), tripID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

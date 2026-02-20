@@ -37,7 +37,7 @@ func NewUpdateCarUseCase(
 	}
 }
 
-func (uc *UpdateCarUseCase) Execute(ctx context.Context, id string, userID string, input UpdateCarData) (*entities.Car, error) {
+func (uc *UpdateCarUseCase) Execute(ctx context.Context, id, userID string, input UpdateCarData) (*entities.Car, error) {
 	existing, err := uc.carRepository.FindByID(ctx, id)
 	if err != nil {
 		return nil, err

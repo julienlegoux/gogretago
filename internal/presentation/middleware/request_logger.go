@@ -26,12 +26,12 @@ func RequestLogger() gin.HandlerFunc {
 		path := c.Request.URL.Path
 
 		if os.Getenv("GIN_MODE") == "release" {
-			fmt.Fprintf(os.Stdout,
+			_, _ = fmt.Fprintf(os.Stdout,
 				`{"level":"info","message":"request","timestamp":"%s","requestId":"%s","method":"%s","path":"%s","status":%d,"duration_ms":%d}`+"\n",
 				time.Now().Format(time.RFC3339), requestID, method, path, status, duration.Milliseconds(),
 			)
 		} else {
-			fmt.Fprintf(os.Stdout,
+			_, _ = fmt.Fprintf(os.Stdout,
 				"\033[2m%s\033[0m \033[32mINFO \033[0m \033[2m[%s]\033[0m %s %s %d %dms\n",
 				time.Now().Format(time.RFC3339), requestID[:8], method, path, status, duration.Milliseconds(),
 			)

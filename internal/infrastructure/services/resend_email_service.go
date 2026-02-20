@@ -25,7 +25,7 @@ func NewResendEmailService() services.EmailService {
 }
 
 // SendWelcomeEmail sends a welcome email to a new user
-func (s *ResendEmailService) SendWelcomeEmail(to string, firstName string) error {
+func (s *ResendEmailService) SendWelcomeEmail(to, firstName string) error {
 	html := fmt.Sprintf(`
 		<h1>Welcome, %s!</h1>
 		<p>Thank you for joining our carpooling platform.</p>

@@ -51,7 +51,7 @@ func TestTripController_ListTrips_Success(t *testing.T) {
 	router.GET("/trips", ctrl.ListTrips)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -70,7 +70,7 @@ func TestTripController_ListTrips_Empty(t *testing.T) {
 	router.GET("/trips", ctrl.ListTrips)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -85,7 +85,7 @@ func TestTripController_ListTrips_Error(t *testing.T) {
 	router.GET("/trips", ctrl.ListTrips)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -101,7 +101,7 @@ func TestTripController_GetTrip_Success(t *testing.T) {
 	router.GET("/trips/:id", ctrl.GetTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -120,7 +120,7 @@ func TestTripController_GetTrip_NotFound(t *testing.T) {
 	router.GET("/trips/:id", ctrl.GetTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/trip-999", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/trip-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -138,7 +138,7 @@ func TestTripController_FindTrip_Success(t *testing.T) {
 	router.GET("/trips/search", ctrl.FindTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/search?departureCity=Paris&arrivalCity=Lyon", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/search?departureCity=Paris&arrivalCity=Lyon", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -158,7 +158,7 @@ func TestTripController_FindTrip_WithDate(t *testing.T) {
 	router.GET("/trips/search", ctrl.FindTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/search?date=2025-06-15", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/search?date=2025-06-15", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -219,7 +219,7 @@ func TestTripController_DeleteTrip_Success(t *testing.T) {
 	router.DELETE("/trips/:id", ctrl.DeleteTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/trips/trip-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/trips/trip-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -238,7 +238,7 @@ func TestTripController_DeleteTrip_NotFound(t *testing.T) {
 	router.DELETE("/trips/:id", ctrl.DeleteTrip)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/trips/trip-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/trips/trip-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)

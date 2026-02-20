@@ -14,7 +14,7 @@ func init() {
 }
 
 func createPaginationContext(queryString string) *gin.Context {
-	req := httptest.NewRequest(http.MethodGet, "/test?"+queryString, nil)
+	req := httptest.NewRequest(http.MethodGet, "/test?"+queryString, http.NoBody)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req

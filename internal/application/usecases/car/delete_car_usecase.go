@@ -22,7 +22,7 @@ func NewDeleteCarUseCase(
 	}
 }
 
-func (uc *DeleteCarUseCase) Execute(ctx context.Context, id string, userID string) error {
+func (uc *DeleteCarUseCase) Execute(ctx context.Context, id, userID string) error {
 	existing, err := uc.carRepository.FindByID(ctx, id)
 	if err != nil {
 		return err

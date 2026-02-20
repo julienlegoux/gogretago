@@ -36,7 +36,7 @@ func NewUserController(
 func (ctrl *UserController) ListUsers(c *gin.Context) {
 	result, err := ctrl.listUseCase.Execute(c.Request.Context())
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 
 	result, err := ctrl.getUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -110,7 +110,7 @@ func (ctrl *UserController) UpdateProfile(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.updateUseCase.Execute(c.Request.Context(), userID, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (ctrl *UserController) AnonymizeMe(c *gin.Context) {
 
 	err := ctrl.anonymizeUseCase.Execute(c.Request.Context(), userID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -139,7 +139,7 @@ func (ctrl *UserController) AnonymizeUser(c *gin.Context) {
 
 	err := ctrl.anonymizeUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

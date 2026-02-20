@@ -59,7 +59,7 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.registerUseCase.Execute(c.Request.Context(), input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -102,7 +102,7 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.loginUseCase.Execute(c.Request.Context(), input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

@@ -40,7 +40,7 @@ func TestCityController_ListCities_Success(t *testing.T) {
 	router.GET("/cities", ctrl.ListCities)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cities", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cities", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -59,7 +59,7 @@ func TestCityController_ListCities_Empty(t *testing.T) {
 	router.GET("/cities", ctrl.ListCities)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cities", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cities", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -74,7 +74,7 @@ func TestCityController_ListCities_Error(t *testing.T) {
 	router.GET("/cities", ctrl.ListCities)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cities", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cities", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -138,7 +138,7 @@ func TestCityController_DeleteCity_Success(t *testing.T) {
 	router.DELETE("/cities/:id", ctrl.DeleteCity)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/cities/city-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/cities/city-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -153,7 +153,7 @@ func TestCityController_DeleteCity_NotFound(t *testing.T) {
 	router.DELETE("/cities/:id", ctrl.DeleteCity)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/cities/city-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/cities/city-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)

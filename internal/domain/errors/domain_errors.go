@@ -54,7 +54,7 @@ type UserAlreadyExistsError struct{ DomainError }
 
 func NewUserAlreadyExistsError(email string) *UserAlreadyExistsError {
 	return &UserAlreadyExistsError{DomainError{
-		Message: fmt.Sprintf("A user with email \"%s\" already exists", email),
+		Message: fmt.Sprintf("A user with email %q already exists", email),
 		Code:    "USER_ALREADY_EXISTS",
 	}}
 }
@@ -108,7 +108,7 @@ type CarAlreadyExistsError struct{ DomainError }
 
 func NewCarAlreadyExistsError(licensePlate string) *CarAlreadyExistsError {
 	return &CarAlreadyExistsError{DomainError{
-		Message: fmt.Sprintf("A car with license plate \"%s\" already exists", licensePlate),
+		Message: fmt.Sprintf("A car with license plate %q already exists", licensePlate),
 		Code:    "CAR_ALREADY_EXISTS",
 	}}
 }
@@ -126,7 +126,7 @@ type DriverAlreadyExistsError struct{ DomainError }
 
 func NewDriverAlreadyExistsError(userId string) *DriverAlreadyExistsError {
 	return &DriverAlreadyExistsError{DomainError{
-		Message: fmt.Sprintf("A driver already exists for user \"%s\"", userId),
+		Message: fmt.Sprintf("A driver already exists for user %q", userId),
 		Code:    "DRIVER_ALREADY_EXISTS",
 	}}
 }

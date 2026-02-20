@@ -22,7 +22,7 @@ func NewDeleteTripUseCase(
 	}
 }
 
-func (uc *DeleteTripUseCase) Execute(ctx context.Context, id string, userID string) error {
+func (uc *DeleteTripUseCase) Execute(ctx context.Context, id, userID string) error {
 	existing, err := uc.tripRepository.FindByID(ctx, id)
 	if err != nil {
 		return err

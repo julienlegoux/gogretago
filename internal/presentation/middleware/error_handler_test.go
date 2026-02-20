@@ -37,7 +37,7 @@ func TestErrorHandler_DomainError(t *testing.T) {
 		Code:    "USER_NOT_FOUND",
 	}
 	router, w := setupErrorHandlerRouter(domainErr)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
@@ -58,7 +58,7 @@ func TestErrorHandler_ValidationError(t *testing.T) {
 	validationErr := apperrors.NewValidationError("Validation failed", details)
 
 	router, w := setupErrorHandlerRouter(validationErr)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -80,7 +80,7 @@ func TestErrorHandler_ApplicationError(t *testing.T) {
 	}
 
 	router, w := setupErrorHandlerRouter(appErr)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -96,7 +96,7 @@ func TestErrorHandler_UnknownError(t *testing.T) {
 	unknownErr := fmt.Errorf("some unexpected error")
 
 	router, w := setupErrorHandlerRouter(unknownErr)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -111,7 +111,7 @@ func TestErrorHandler_UnknownError(t *testing.T) {
 
 func TestErrorHandler_NoErrors(t *testing.T) {
 	router, w := setupErrorHandlerRouter(nil)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)

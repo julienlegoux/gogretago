@@ -10,9 +10,7 @@ import (
 func RegisterInscriptionRoutes(router *gin.RouterGroup, inscriptionController *controllers.InscriptionController, auth gin.HandlerFunc) {
 	inscriptions := router.Group("/inscriptions")
 	inscriptions.Use(auth)
-	{
-		inscriptions.GET("", middleware.RequireRole("USER"), inscriptionController.ListInscriptions)
-		inscriptions.POST("", middleware.RequireRole("USER"), inscriptionController.CreateInscription)
-		inscriptions.DELETE("/:id", middleware.RequireRole("USER"), inscriptionController.DeleteInscription)
-	}
+	inscriptions.GET("", middleware.RequireRole("USER"), inscriptionController.ListInscriptions)
+	inscriptions.POST("", middleware.RequireRole("USER"), inscriptionController.CreateInscription)
+	inscriptions.DELETE("/:id", middleware.RequireRole("USER"), inscriptionController.DeleteInscription)
 }

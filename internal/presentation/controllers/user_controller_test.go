@@ -42,7 +42,7 @@ func TestUserController_ListUsers_Success(t *testing.T) {
 	router.GET("/users", ctrl.ListUsers)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -61,7 +61,7 @@ func TestUserController_ListUsers_Error(t *testing.T) {
 	router.GET("/users", ctrl.ListUsers)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -86,7 +86,7 @@ func TestUserController_GetUser_OwnProfile(t *testing.T) {
 	router.GET("/users/:id", ctrl.GetUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -115,7 +115,7 @@ func TestUserController_GetUser_AdminCanViewOther(t *testing.T) {
 	router.GET("/users/:id", ctrl.GetUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-2", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-2", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -133,7 +133,7 @@ func TestUserController_GetUser_NonAdminCannotViewOther(t *testing.T) {
 	router.GET("/users/:id", ctrl.GetUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-2", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-2", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
@@ -157,7 +157,7 @@ func TestUserController_GetUser_DriverCannotViewOther(t *testing.T) {
 	router.GET("/users/:id", ctrl.GetUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-2", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-2", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
@@ -256,7 +256,7 @@ func TestUserController_AnonymizeMe_Success(t *testing.T) {
 	router.DELETE("/users/me", ctrl.AnonymizeMe)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/users/me", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/users/me", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -276,7 +276,7 @@ func TestUserController_AnonymizeUser_Success(t *testing.T) {
 	router.DELETE("/users/:id", ctrl.AnonymizeUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/users/user-2", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/users/user-2", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -291,7 +291,7 @@ func TestUserController_AnonymizeUser_Error(t *testing.T) {
 	router.DELETE("/users/:id", ctrl.AnonymizeUser)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/users/user-2", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/users/user-2", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	// c.Error() is called, status not set explicitly

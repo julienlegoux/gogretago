@@ -41,7 +41,7 @@ func TestColorController_ListColors_Success(t *testing.T) {
 	router.GET("/colors", ctrl.ListColors)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/colors", nil)
+	req := httptest.NewRequest(http.MethodGet, "/colors", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -60,7 +60,7 @@ func TestColorController_ListColors_Empty(t *testing.T) {
 	router.GET("/colors", ctrl.ListColors)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/colors", nil)
+	req := httptest.NewRequest(http.MethodGet, "/colors", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -75,7 +75,7 @@ func TestColorController_ListColors_Error(t *testing.T) {
 	router.GET("/colors", ctrl.ListColors)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/colors", nil)
+	req := httptest.NewRequest(http.MethodGet, "/colors", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -176,7 +176,7 @@ func TestColorController_DeleteColor_Success(t *testing.T) {
 	router.DELETE("/colors/:id", ctrl.DeleteColor)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/colors/color-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/colors/color-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -191,7 +191,7 @@ func TestColorController_DeleteColor_NotFound(t *testing.T) {
 	router.DELETE("/colors/:id", ctrl.DeleteColor)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/colors/color-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/colors/color-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)

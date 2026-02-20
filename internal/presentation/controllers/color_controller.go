@@ -38,7 +38,7 @@ func (ctrl *ColorController) ListColors(c *gin.Context) {
 
 	result, err := ctrl.listUseCase.Execute(c.Request.Context(), params)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (ctrl *ColorController) CreateColor(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -125,7 +125,7 @@ func (ctrl *ColorController) UpdateColor(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.updateUseCase.Execute(c.Request.Context(), id, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -141,7 +141,7 @@ func (ctrl *ColorController) DeleteColor(c *gin.Context) {
 
 	err := ctrl.deleteUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

@@ -49,7 +49,7 @@ func TestInscriptionController_ListInscriptions_Success(t *testing.T) {
 	router.GET("/inscriptions", ctrl.ListInscriptions)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/inscriptions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/inscriptions", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -68,7 +68,7 @@ func TestInscriptionController_ListInscriptions_Empty(t *testing.T) {
 	router.GET("/inscriptions", ctrl.ListInscriptions)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/inscriptions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/inscriptions", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -83,7 +83,7 @@ func TestInscriptionController_ListInscriptions_Error(t *testing.T) {
 	router.GET("/inscriptions", ctrl.ListInscriptions)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/inscriptions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/inscriptions", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -176,7 +176,7 @@ func TestInscriptionController_DeleteInscription_Success(t *testing.T) {
 	router.DELETE("/inscriptions/:id", ctrl.DeleteInscription)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/inscriptions/insc-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/inscriptions/insc-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -195,7 +195,7 @@ func TestInscriptionController_DeleteInscription_NotFound(t *testing.T) {
 	router.DELETE("/inscriptions/:id", ctrl.DeleteInscription)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/inscriptions/insc-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/inscriptions/insc-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -213,7 +213,7 @@ func TestInscriptionController_ListUserInscriptions_Success(t *testing.T) {
 	router.GET("/users/:id/inscriptions", ctrl.ListUserInscriptions)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-1/inscriptions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-1/inscriptions", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -232,7 +232,7 @@ func TestInscriptionController_ListUserInscriptions_Error(t *testing.T) {
 	router.GET("/users/:id/inscriptions", ctrl.ListUserInscriptions)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/user-1/inscriptions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/user-1/inscriptions", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -250,7 +250,7 @@ func TestInscriptionController_ListTripPassengers_Success(t *testing.T) {
 	router.GET("/trips/:id/passengers", ctrl.ListTripPassengers)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1/passengers", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1/passengers", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -269,7 +269,7 @@ func TestInscriptionController_ListTripPassengers_Error(t *testing.T) {
 	router.GET("/trips/:id/passengers", ctrl.ListTripPassengers)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1/passengers", nil)
+	req := httptest.NewRequest(http.MethodGet, "/trips/trip-1/passengers", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
