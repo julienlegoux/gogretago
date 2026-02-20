@@ -19,9 +19,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Run linter
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
+        uses: golangci/golangci-lint-action@v7
 
   test:
     runs-on: ubuntu-latest
