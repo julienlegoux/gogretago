@@ -3,6 +3,7 @@ package routes
 import (
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/lgxju/gogretago/internal/infrastructure/di"
 	"github.com/lgxju/gogretago/internal/presentation/controllers"
@@ -16,13 +17,25 @@ func SetupRouter(container *di.Container) *gin.Engine {
 	// Apply global error handler
 	router.Use(middleware.ErrorHandler())
 
-	// Health check endpoint
+	// Health check endpoint (public, outside /api group)
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status":    "ok",
 			"timestamp": time.Now().Format(time.RFC3339),
 		})
 	})
+
+	// API sub-router with global middleware
+	apiBase := router.Group("/api")
+	apiBase.Use(middleware.SecureHeaders())
+	apiBase.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization", "x-auth-token"},
+		ExposeHeaders:   []string{"X-Request-Id"},
+	}))
+	apiBase.Use(middleware.RequestLogger())
+	apiBase.Use(middleware.BodyLimit(1024 * 1024)) // 1 MB
 
 	// Auth middleware handler function
 	auth := middleware.AuthMiddleware(container.JwtService)
@@ -87,7 +100,7 @@ func SetupRouter(container *di.Container) *gin.Engine {
 	)
 
 	// Register routes under /api/v1
-	api := router.Group("/api/v1")
+	api := apiBase.Group("/v1")
 
 	RegisterAuthRoutes(api, authController)
 	RegisterUserRoutes(api, userController, inscriptionController, auth)
