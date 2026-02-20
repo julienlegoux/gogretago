@@ -57,7 +57,7 @@ func (ctrl *DriverController) CreateDriver(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), userID, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

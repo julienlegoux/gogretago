@@ -17,7 +17,7 @@ func NewDeleteInscriptionUseCase(inscriptionRepository repositories.InscriptionR
 	}
 }
 
-func (uc *DeleteInscriptionUseCase) Execute(ctx context.Context, id string, userID string) error {
+func (uc *DeleteInscriptionUseCase) Execute(ctx context.Context, id, userID string) error {
 	existing, err := uc.inscriptionRepository.FindByIDAndUserID(ctx, id, userID)
 	if err != nil {
 		return err

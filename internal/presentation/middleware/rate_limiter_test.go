@@ -19,7 +19,7 @@ func TestRateLimiter_AllowsRequestsWithinLimit(t *testing.T) {
 	})
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.RemoteAddr = "192.168.1.1:1234"
 	router.ServeHTTP(w, req)
 
@@ -40,7 +40,7 @@ func TestRateLimiter_BlocksExcessiveRequests(t *testing.T) {
 	blocked := false
 	for i := 0; i < 10; i++ {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+		req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 		req.RemoteAddr = "10.0.0.1:1234"
 		router.ServeHTTP(w, req)
 		lastCode = w.Code
@@ -63,7 +63,7 @@ func TestRateLimiter_ReturnsCorrectErrorResponse(t *testing.T) {
 
 	// First request should pass
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.RemoteAddr = "10.0.0.2:1234"
 	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -72,7 +72,7 @@ func TestRateLimiter_ReturnsCorrectErrorResponse(t *testing.T) {
 	var rateLimitedResponse *httptest.ResponseRecorder
 	for i := 0; i < 10; i++ {
 		w = httptest.NewRecorder()
-		req = httptest.NewRequest(http.MethodGet, "/test", nil)
+		req = httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 		req.RemoteAddr = "10.0.0.2:1234"
 		router.ServeHTTP(w, req)
 		if w.Code == http.StatusTooManyRequests {
@@ -102,14 +102,14 @@ func TestRateLimiter_DifferentIPsHaveSeparateLimits(t *testing.T) {
 
 	// First IP - should be allowed
 	w1 := httptest.NewRecorder()
-	req1 := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req1 := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req1.RemoteAddr = "10.0.0.10:1234"
 	router.ServeHTTP(w1, req1)
 	assert.Equal(t, http.StatusOK, w1.Code)
 
 	// Second IP - should also be allowed (separate rate limiter)
 	w2 := httptest.NewRecorder()
-	req2 := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req2 := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req2.RemoteAddr = "10.0.0.11:1234"
 	router.ServeHTTP(w2, req2)
 	assert.Equal(t, http.StatusOK, w2.Code)
@@ -126,7 +126,7 @@ func TestRateLimiter_AbortsOnRateLimit(t *testing.T) {
 
 	// First request passes
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.RemoteAddr = "10.0.0.20:1234"
 	router.ServeHTTP(w, req)
 	assert.True(t, handlerCalled)
@@ -135,7 +135,7 @@ func TestRateLimiter_AbortsOnRateLimit(t *testing.T) {
 	handlerCalled = false
 	for i := 0; i < 10; i++ {
 		w = httptest.NewRecorder()
-		req = httptest.NewRequest(http.MethodGet, "/test", nil)
+		req = httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 		req.RemoteAddr = "10.0.0.20:1234"
 		handlerCalled = false
 		router.ServeHTTP(w, req)

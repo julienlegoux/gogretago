@@ -41,7 +41,7 @@ func TestBrandController_ListBrands_Success(t *testing.T) {
 	router.GET("/brands", ctrl.ListBrands)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/brands", nil)
+	req := httptest.NewRequest(http.MethodGet, "/brands", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -63,7 +63,7 @@ func TestBrandController_ListBrands_WithPagination(t *testing.T) {
 	router.GET("/brands", ctrl.ListBrands)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/brands?page=2&limit=10", nil)
+	req := httptest.NewRequest(http.MethodGet, "/brands?page=2&limit=10", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -78,7 +78,7 @@ func TestBrandController_ListBrands_Error(t *testing.T) {
 	router.GET("/brands", ctrl.ListBrands)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/brands", nil)
+	req := httptest.NewRequest(http.MethodGet, "/brands", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -146,7 +146,7 @@ func TestBrandController_DeleteBrand_Success(t *testing.T) {
 	router.DELETE("/brands/:id", ctrl.DeleteBrand)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/brands/brand-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/brands/brand-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -161,7 +161,7 @@ func TestBrandController_DeleteBrand_NotFound(t *testing.T) {
 	router.DELETE("/brands/:id", ctrl.DeleteBrand)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/brands/brand-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/brands/brand-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	// c.Error() is called with BrandNotFoundError

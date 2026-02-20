@@ -33,7 +33,7 @@ func setupAuthzRouter(role interface{}, setRole bool, requiredRoles ...string) (
 
 func TestRequireRole_AdminAccessesAdminRoute(t *testing.T) {
 	router, w := setupAuthzRouter("ADMIN", true, "ADMIN")
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -41,7 +41,7 @@ func TestRequireRole_AdminAccessesAdminRoute(t *testing.T) {
 
 func TestRequireRole_AdminAccessesDriverRoute(t *testing.T) {
 	router, w := setupAuthzRouter("ADMIN", true, "DRIVER")
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code, "ADMIN (level 3) should access DRIVER (level 2) route")
@@ -49,7 +49,7 @@ func TestRequireRole_AdminAccessesDriverRoute(t *testing.T) {
 
 func TestRequireRole_UserBlockedFromDriverRoute(t *testing.T) {
 	router, w := setupAuthzRouter("USER", true, "DRIVER")
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
@@ -65,7 +65,7 @@ func TestRequireRole_UserBlockedFromDriverRoute(t *testing.T) {
 
 func TestRequireRole_NoRoleInContext(t *testing.T) {
 	router, w := setupAuthzRouter(nil, false, "USER")
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
@@ -81,7 +81,7 @@ func TestRequireRole_NoRoleInContext(t *testing.T) {
 func TestRequireRole_InvalidRoleType(t *testing.T) {
 	// Set role as int instead of string
 	router, w := setupAuthzRouter(42, true, "USER")
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)

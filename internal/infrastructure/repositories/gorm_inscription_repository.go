@@ -80,7 +80,7 @@ func (r *GormInscriptionRepository) FindByTripID(ctx context.Context, tripID str
 	return result, nil
 }
 
-func (r *GormInscriptionRepository) FindByIDAndUserID(ctx context.Context, id string, userID string) (*entities.Inscription, error) {
+func (r *GormInscriptionRepository) FindByIDAndUserID(ctx context.Context, id, userID string) (*entities.Inscription, error) {
 	var user database.UserModel
 	if err := r.db.WithContext(ctx).Where("id = ?", userID).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

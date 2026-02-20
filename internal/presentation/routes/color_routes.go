@@ -10,10 +10,8 @@ import (
 func RegisterColorRoutes(router *gin.RouterGroup, colorController *controllers.ColorController, auth gin.HandlerFunc) {
 	colors := router.Group("/colors")
 	colors.Use(auth)
-	{
-		colors.GET("", middleware.RequireRole("DRIVER"), colorController.ListColors)
-		colors.POST("", middleware.RequireRole("ADMIN"), colorController.CreateColor)
-		colors.PATCH("/:id", middleware.RequireRole("ADMIN"), colorController.UpdateColor)
-		colors.DELETE("/:id", middleware.RequireRole("ADMIN"), colorController.DeleteColor)
-	}
+	colors.GET("", middleware.RequireRole("DRIVER"), colorController.ListColors)
+	colors.POST("", middleware.RequireRole("ADMIN"), colorController.CreateColor)
+	colors.PATCH("/:id", middleware.RequireRole("ADMIN"), colorController.UpdateColor)
+	colors.DELETE("/:id", middleware.RequireRole("ADMIN"), colorController.DeleteColor)
 }

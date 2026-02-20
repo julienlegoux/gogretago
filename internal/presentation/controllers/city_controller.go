@@ -35,7 +35,7 @@ func (ctrl *CityController) ListCities(c *gin.Context) {
 
 	result, err := ctrl.listUseCase.Execute(c.Request.Context(), params)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func (ctrl *CityController) CreateCity(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -94,7 +94,7 @@ func (ctrl *CityController) DeleteCity(c *gin.Context) {
 
 	err := ctrl.deleteUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

@@ -76,7 +76,7 @@ func (s *JwtServiceImpl) Verify(tokenString string) (*services.JwtPayload, error
 // calculateExpiration parses the expiresIn string and returns Unix timestamp
 func (s *JwtServiceImpl) calculateExpiration() int64 {
 	now := time.Now()
-	re := regexp.MustCompile(`^(\d+)(h|d|m)$`)
+	re := regexp.MustCompile(`^(\d+)([hdm])$`)
 	match := re.FindStringSubmatch(s.expiresIn)
 
 	if len(match) != 3 {

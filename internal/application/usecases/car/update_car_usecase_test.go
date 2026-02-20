@@ -12,10 +12,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func strPtr(s string) *string {
-	return &s
-}
-
 func TestUpdateCar_Success(t *testing.T) {
 	ctx := context.Background()
 	carID := "car-1"

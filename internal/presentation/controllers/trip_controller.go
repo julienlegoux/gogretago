@@ -41,7 +41,7 @@ func (ctrl *TripController) ListTrips(c *gin.Context) {
 
 	result, err := ctrl.listUseCase.Execute(c.Request.Context(), params)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (ctrl *TripController) GetTrip(c *gin.Context) {
 
 	result, err := ctrl.getUseCase.Execute(c.Request.Context(), id)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -84,7 +84,7 @@ func (ctrl *TripController) FindTrip(c *gin.Context) {
 
 	result, err := ctrl.findUseCase.Execute(c.Request.Context(), query)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -128,7 +128,7 @@ func (ctrl *TripController) CreateTrip(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), userID, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (ctrl *TripController) DeleteTrip(c *gin.Context) {
 
 	err := ctrl.deleteUseCase.Execute(c.Request.Context(), id, userID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

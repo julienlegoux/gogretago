@@ -38,7 +38,7 @@ func TestAuthMiddleware_ValidBearerToken(t *testing.T) {
 	}, nil)
 
 	router, w := setupAuthTest(t, mockJwt)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer valid-token")
 	router.ServeHTTP(w, req)
 
@@ -59,7 +59,7 @@ func TestAuthMiddleware_ValidXAuthToken(t *testing.T) {
 	}, nil)
 
 	router, w := setupAuthTest(t, mockJwt)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.Header.Set("x-auth-token", "x-token-value")
 	router.ServeHTTP(w, req)
 
@@ -77,7 +77,7 @@ func TestAuthMiddleware_MissingToken(t *testing.T) {
 	// No Verify call expected since no token provided
 
 	router, w := setupAuthTest(t, mockJwt)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
@@ -96,7 +96,7 @@ func TestAuthMiddleware_InvalidToken(t *testing.T) {
 	mockJwt.EXPECT().Verify("bad-token").Return(nil, fmt.Errorf("token is invalid"))
 
 	router, w := setupAuthTest(t, mockJwt)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer bad-token")
 	router.ServeHTTP(w, req)
 
@@ -116,7 +116,7 @@ func TestAuthMiddleware_NilPayload(t *testing.T) {
 	mockJwt.EXPECT().Verify("nil-payload-token").Return(nil, nil)
 
 	router, w := setupAuthTest(t, mockJwt)
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer nil-payload-token")
 	router.ServeHTTP(w, req)
 

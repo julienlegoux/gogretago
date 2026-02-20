@@ -116,7 +116,7 @@ func (l *Logger) formatJSON(entry LogEntry) {
 		fmt.Fprintf(os.Stderr, "logger marshal error: %v\n", err)
 		return
 	}
-	fmt.Fprintln(os.Stdout, string(data))
+	_, _ = fmt.Fprintln(os.Stdout, string(data))
 }
 
 func (l *Logger) formatPretty(entry LogEntry) {
@@ -139,7 +139,7 @@ func (l *Logger) formatPretty(entry LogEntry) {
 		output += fmt.Sprintf(" %s%s%s", dim, string(ctx), reset)
 	}
 
-	fmt.Fprintln(os.Stdout, output)
+	_, _ = fmt.Fprintln(os.Stdout, output)
 }
 
 // Debug logs a debug message

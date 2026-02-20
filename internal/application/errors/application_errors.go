@@ -33,7 +33,7 @@ type NotFoundError struct {
 	ApplicationError
 }
 
-func NewNotFoundError(resource string, identifier string) *NotFoundError {
+func NewNotFoundError(resource, identifier string) *NotFoundError {
 	return &NotFoundError{
 		ApplicationError: ApplicationError{
 			Message: fmt.Sprintf("%s not found: %s", resource, identifier),

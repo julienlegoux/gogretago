@@ -10,7 +10,5 @@ import (
 func RegisterDriverRoutes(router *gin.RouterGroup, driverController *controllers.DriverController, auth gin.HandlerFunc) {
 	drivers := router.Group("/drivers")
 	drivers.Use(auth)
-	{
-		drivers.POST("", middleware.RequireRole("USER"), driverController.CreateDriver)
-	}
+	drivers.POST("", middleware.RequireRole("USER"), driverController.CreateDriver)
 }

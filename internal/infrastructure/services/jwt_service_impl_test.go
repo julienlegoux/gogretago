@@ -1,7 +1,6 @@
 package services
 
 import (
-	"os"
 	"testing"
 	"time"
 
@@ -16,17 +15,13 @@ const testJWTSecret = "a-very-long-secret-key-for-testing-purposes-at-least-32-c
 
 func setupJwtEnv(t *testing.T, expiresIn string) {
 	t.Helper()
-	os.Setenv("JWT_SECRET", testJWTSecret)
-	os.Setenv("JWT_EXPIRES_IN", expiresIn)
-	os.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/testdb")
+	t.Setenv("JWT_SECRET", testJWTSecret)
+	t.Setenv("JWT_EXPIRES_IN", expiresIn)
+	t.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/testdb")
 	// Reset the config so it reloads from env
 	_, err := config.Load()
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		os.Unsetenv("JWT_SECRET")
-		os.Unsetenv("JWT_EXPIRES_IN")
-		os.Unsetenv("DATABASE_URL")
-	})
+	// t.Setenv automatically restores the previous value on cleanup
 }
 
 func TestJwtSign_ProducesValidToken(t *testing.T) {

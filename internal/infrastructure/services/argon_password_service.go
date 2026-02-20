@@ -48,7 +48,7 @@ func (s *ArgonPasswordService) Hash(password string) (string, error) {
 }
 
 // Verify verifies a password against a hash
-func (s *ArgonPasswordService) Verify(password string, encodedHash string) (bool, error) {
+func (s *ArgonPasswordService) Verify(password, encodedHash string) (bool, error) {
 	// Parse the encoded hash
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 {

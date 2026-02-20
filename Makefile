@@ -1,4 +1,4 @@
-.PHONY: mocks test test-unit test-integration test-coverage
+.PHONY: mocks test test-unit test-integration test-coverage lint
 
 mocks:
 	mockery
@@ -14,3 +14,6 @@ test-integration:
 test-coverage:
 	go test ./... -count=1 -coverprofile=coverage.out -covermode=atomic
 	go tool cover -html=coverage.out -o coverage.html
+
+lint:
+	golangci-lint run ./...

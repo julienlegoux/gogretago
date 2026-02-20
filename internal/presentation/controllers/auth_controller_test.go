@@ -22,14 +22,16 @@ func init() {
 	gin.SetMode(gin.TestMode)
 }
 
-func setupAuthController(t *testing.T) (
-	*AuthController,
-	*mocks.MockAuthRepository,
-	*mocks.MockUserRepository,
-	*mocks.MockPasswordService,
-	*mocks.MockEmailService,
-	*mocks.MockJwtService,
-) {
+type authControllerDeps struct {
+	ctrl        *AuthController
+	authRepo    *mocks.MockAuthRepository
+	userRepo    *mocks.MockUserRepository
+	passwordSvc *mocks.MockPasswordService
+	emailSvc    *mocks.MockEmailService
+	jwtSvc      *mocks.MockJwtService
+}
+
+func setupAuthController(t *testing.T) authControllerDeps {
 	authRepo := mocks.NewMockAuthRepository(t)
 	userRepo := mocks.NewMockUserRepository(t)
 	passwordSvc := mocks.NewMockPasswordService(t)
@@ -40,11 +42,12 @@ func setupAuthController(t *testing.T) (
 	loginUC := auth.NewLoginUseCase(authRepo, userRepo, passwordSvc, jwtSvc)
 	ctrl := NewAuthController(registerUC, loginUC)
 
-	return ctrl, authRepo, userRepo, passwordSvc, emailSvc, jwtSvc
+	return authControllerDeps{ctrl, authRepo, userRepo, passwordSvc, emailSvc, jwtSvc}
 }
 
 func TestAuthController_Register_Success(t *testing.T) {
-	ctrl, authRepo, _, passwordSvc, emailSvc, jwtSvc := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl, authRepo, passwordSvc, emailSvc, jwtSvc := d.ctrl, d.authRepo, d.passwordSvc, d.emailSvc, d.jwtSvc
 
 	authEntity := &entities.Auth{ID: "auth-1", RefID: 1, Email: "test@example.com", Role: "USER"}
 	userEntity := &entities.PublicUser{
@@ -78,7 +81,8 @@ func TestAuthController_Register_Success(t *testing.T) {
 }
 
 func TestAuthController_Register_InvalidJSON(t *testing.T) {
-	ctrl, _, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl := d.ctrl
 
 	router := gin.New()
 	router.POST("/register", ctrl.Register)
@@ -98,7 +102,8 @@ func TestAuthController_Register_InvalidJSON(t *testing.T) {
 }
 
 func TestAuthController_Register_ValidationError(t *testing.T) {
-	ctrl, _, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl := d.ctrl
 
 	router := gin.New()
 	router.POST("/register", ctrl.Register)
@@ -121,7 +126,8 @@ func TestAuthController_Register_ValidationError(t *testing.T) {
 }
 
 func TestAuthController_Register_UseCaseError(t *testing.T) {
-	ctrl, authRepo, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl, authRepo := d.ctrl, d.authRepo
 
 	authRepo.EXPECT().ExistsByEmail(mock.Anything, "existing@example.com").Return(true, nil)
 
@@ -139,7 +145,8 @@ func TestAuthController_Register_UseCaseError(t *testing.T) {
 }
 
 func TestAuthController_Login_Success(t *testing.T) {
-	ctrl, authRepo, userRepo, passwordSvc, _, jwtSvc := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl, authRepo, userRepo, passwordSvc, jwtSvc := d.ctrl, d.authRepo, d.userRepo, d.passwordSvc, d.jwtSvc
 
 	authEntity := &entities.Auth{ID: "auth-1", RefID: 1, Email: "test@example.com", Password: "hashed", Role: "USER"}
 	userEntity := &entities.PublicUser{
@@ -169,7 +176,8 @@ func TestAuthController_Login_Success(t *testing.T) {
 }
 
 func TestAuthController_Login_InvalidJSON(t *testing.T) {
-	ctrl, _, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl := d.ctrl
 
 	router := gin.New()
 	router.POST("/login", ctrl.Login)
@@ -183,7 +191,8 @@ func TestAuthController_Login_InvalidJSON(t *testing.T) {
 }
 
 func TestAuthController_Login_ValidationError(t *testing.T) {
-	ctrl, _, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl := d.ctrl
 
 	router := gin.New()
 	router.POST("/login", ctrl.Login)
@@ -203,7 +212,8 @@ func TestAuthController_Login_ValidationError(t *testing.T) {
 }
 
 func TestAuthController_Login_UseCaseError(t *testing.T) {
-	ctrl, authRepo, _, _, _, _ := setupAuthController(t)
+	d := setupAuthController(t)
+	ctrl, authRepo := d.ctrl, d.authRepo
 
 	authRepo.EXPECT().FindByEmail(mock.Anything, "bad@example.com").Return(nil, fmt.Errorf("db error"))
 

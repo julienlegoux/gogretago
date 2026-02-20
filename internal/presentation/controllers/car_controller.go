@@ -38,7 +38,7 @@ func (ctrl *CarController) ListCars(c *gin.Context) {
 
 	result, err := ctrl.listUseCase.Execute(c.Request.Context(), params)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (ctrl *CarController) CreateCar(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.createUseCase.Execute(c.Request.Context(), userID, input)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -135,7 +135,7 @@ func (ctrl *CarController) UpdateCar(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.updateUseCase.Execute(c.Request.Context(), id, userID, data)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -187,7 +187,7 @@ func (ctrl *CarController) PatchCar(c *gin.Context) {
 	// Execute use case
 	result, err := ctrl.updateUseCase.Execute(c.Request.Context(), id, userID, data)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -204,7 +204,7 @@ func (ctrl *CarController) DeleteCar(c *gin.Context) {
 
 	err := ctrl.deleteUseCase.Execute(c.Request.Context(), id, userID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

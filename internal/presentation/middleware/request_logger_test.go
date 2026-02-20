@@ -17,7 +17,7 @@ func TestRequestLogger_SetsRequestIdHeader(t *testing.T) {
 	})
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -38,7 +38,7 @@ func TestRequestLogger_SetsRequestIdInContext(t *testing.T) {
 	})
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.NotEmpty(t, contextRequestID)
@@ -53,11 +53,11 @@ func TestRequestLogger_UniqueRequestIdsPerRequest(t *testing.T) {
 	})
 
 	w1 := httptest.NewRecorder()
-	req1 := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req1 := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w1, req1)
 
 	w2 := httptest.NewRecorder()
-	req2 := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req2 := httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 	router.ServeHTTP(w2, req2)
 
 	id1 := w1.Header().Get("X-Request-Id")
@@ -79,7 +79,7 @@ func TestRequestLogger_WorksWithDifferentHTTPMethods(t *testing.T) {
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest(method, "/test", nil)
+			req := httptest.NewRequest(method, "/test", http.NoBody)
 			router.ServeHTTP(w, req)
 
 			assert.Equal(t, http.StatusOK, w.Code)

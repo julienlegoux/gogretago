@@ -10,8 +10,8 @@ var validate *validator.Validate
 
 func init() {
 	validate = validator.New()
-	validate.RegisterValidation("password", validatePassword)
-	validate.RegisterValidation("hexcolor", validateHexColor)
+	_ = validate.RegisterValidation("password", validatePassword)
+	_ = validate.RegisterValidation("hexcolor", validateHexColor)
 }
 
 // GetValidator returns the validator instance

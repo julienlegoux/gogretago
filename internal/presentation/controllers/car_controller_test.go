@@ -50,7 +50,7 @@ func TestCarController_ListCars_Success(t *testing.T) {
 	router.GET("/cars", ctrl.ListCars)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cars", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cars", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -69,7 +69,7 @@ func TestCarController_ListCars_Empty(t *testing.T) {
 	router.GET("/cars", ctrl.ListCars)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cars", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cars", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -84,7 +84,7 @@ func TestCarController_ListCars_Error(t *testing.T) {
 	router.GET("/cars", ctrl.ListCars)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/cars", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cars", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -211,7 +211,7 @@ func TestCarController_DeleteCar_Success(t *testing.T) {
 	router.DELETE("/cars/:id", ctrl.DeleteCar)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/cars/car-1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/cars/car-1", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
@@ -230,7 +230,7 @@ func TestCarController_DeleteCar_NotFound(t *testing.T) {
 	router.DELETE("/cars/:id", ctrl.DeleteCar)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodDelete, "/cars/car-999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/cars/car-999", http.NoBody)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
