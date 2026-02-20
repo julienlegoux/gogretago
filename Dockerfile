@@ -21,8 +21,5 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=builder /api .
 
-# Expose port
-EXPOSE 3000
-
 # Run the application
 CMD ["./api"]

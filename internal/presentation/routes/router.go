@@ -25,8 +25,16 @@ func SetupRouter(container *di.Container) *gin.Engine {
 		})
 	})
 
-	// API sub-router with global middleware
+	// API-level health check (outside /v1 prefix)
 	apiBase := router.Group("/api")
+	apiBase.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":    "ok",
+			"timestamp": time.Now().Format(time.RFC3339),
+		})
+	})
+
+	// API sub-router with global middleware
 	apiBase.Use(middleware.SecureHeaders())
 	apiBase.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
