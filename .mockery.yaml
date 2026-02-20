@@ -1,0 +1,21 @@
+with-expecter: true
+dir: "internal/mocks"
+outpkg: "mocks"
+packages:
+  github.com/lgxju/gogretago/internal/domain/repositories:
+    interfaces:
+      AuthRepository:
+      UserRepository:
+      TripRepository:
+      InscriptionRepository:
+      CarRepository:
+      DriverRepository:
+      BrandRepository:
+      CityRepository:
+      ColorRepository:
+      ModelRepository:
+  github.com/lgxju/gogretago/internal/domain/services:
+    interfaces:
+      JwtService:
+      PasswordService:
+      EmailService:
