@@ -10,80 +10,115 @@ import (
 	"gorm.io/gorm"
 )
 
-// GormUserRepository implements UserRepository using GORM
 type GormUserRepository struct {
 	db *gorm.DB
 }
 
-// NewGormUserRepository creates a new GormUserRepository
 func NewGormUserRepository(db *gorm.DB) repositories.UserRepository {
 	return &GormUserRepository{db: db}
 }
 
-// FindByID finds a user by ID
-func (r *GormUserRepository) FindByID(ctx context.Context, id string) (*entities.User, error) {
-	var model database.UserModel
-	result := r.db.WithContext(ctx).Where("id = ?", id).First(&model)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+func (r *GormUserRepository) FindAll(ctx context.Context) ([]entities.PublicUser, error) {
+	var users []database.UserModel
+	if err := r.db.WithContext(ctx).Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	result := make([]entities.PublicUser, 0, len(users))
+	for _, u := range users {
+		var auth database.AuthModel
+		if err := r.db.WithContext(ctx).Where("ref_id = ?", u.AuthRefID).First(&auth).Error; err != nil {
+			continue
+		}
+		result = append(result, toPublicUserEntity(&u, &auth))
+	}
+	return result, nil
+}
+
+func (r *GormUserRepository) FindByID(ctx context.Context, id string) (*entities.PublicUser, error) {
+	var user database.UserModel
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, err
 	}
-	return toEntity(&model), nil
+
+	var auth database.AuthModel
+	if err := r.db.WithContext(ctx).Where("ref_id = ?", user.AuthRefID).First(&auth).Error; err != nil {
+		return nil, err
+	}
+
+	pu := toPublicUserEntity(&user, &auth)
+	return &pu, nil
 }
 
-// FindByEmail finds a user by email
-func (r *GormUserRepository) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
-	var model database.UserModel
-	result := r.db.WithContext(ctx).Where("email = ?", email).First(&model)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+func (r *GormUserRepository) FindByAuthRefID(ctx context.Context, authRefID int64) (*entities.PublicUser, error) {
+	var user database.UserModel
+	if err := r.db.WithContext(ctx).Where("auth_ref_id = ?", authRefID).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, err
 	}
-	return toEntity(&model), nil
+
+	var auth database.AuthModel
+	if err := r.db.WithContext(ctx).Where("ref_id = ?", authRefID).First(&auth).Error; err != nil {
+		return nil, err
+	}
+
+	pu := toPublicUserEntity(&user, &auth)
+	return &pu, nil
 }
 
-// Create creates a new user
-func (r *GormUserRepository) Create(ctx context.Context, data entities.CreateUserData) (*entities.User, error) {
-	model := &database.UserModel{
-		Email:     data.Email,
-		Password:  data.Password,
-		FirstName: data.FirstName,
-		LastName:  data.LastName,
-		Phone:     data.Phone,
+func (r *GormUserRepository) Update(ctx context.Context, id string, data entities.UpdateUserData) (*entities.PublicUser, error) {
+	updates := map[string]interface{}{}
+	if data.FirstName != nil {
+		updates["first_name"] = *data.FirstName
+	}
+	if data.LastName != nil {
+		updates["last_name"] = *data.LastName
+	}
+	if data.Phone != nil {
+		updates["phone"] = *data.Phone
 	}
 
-	result := r.db.WithContext(ctx).Create(model)
-	if result.Error != nil {
-		return nil, result.Error
+	if len(updates) > 0 {
+		if err := r.db.WithContext(ctx).Model(&database.UserModel{}).Where("id = ?", id).Updates(updates).Error; err != nil {
+			return nil, err
+		}
 	}
 
-	return toEntity(model), nil
+	return r.FindByID(ctx, id)
 }
 
-// ExistsByEmail checks if a user exists with the given email
-func (r *GormUserRepository) ExistsByEmail(ctx context.Context, email string) (bool, error) {
-	var count int64
-	result := r.db.WithContext(ctx).Model(&database.UserModel{}).Where("email = ?", email).Count(&count)
-	if result.Error != nil {
-		return false, result.Error
-	}
-	return count > 0, nil
+func (r *GormUserRepository) Delete(ctx context.Context, id string) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&database.UserModel{}).Error
 }
 
-// toEntity converts a database model to a domain entity
-func toEntity(model *database.UserModel) *entities.User {
-	return &entities.User{
-		ID:        model.ID,
-		Email:     model.Email,
-		Password:  model.Password,
-		FirstName: model.FirstName,
-		LastName:  model.LastName,
-		Phone:     model.Phone,
-		CreatedAt: time.Unix(model.CreatedAt, 0),
-		UpdatedAt: time.Unix(model.UpdatedAt, 0),
+func (r *GormUserRepository) Anonymize(ctx context.Context, id string) error {
+	now := time.Now()
+	return r.db.WithContext(ctx).Model(&database.UserModel{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"first_name":    nil,
+		"last_name":     nil,
+		"phone":         nil,
+		"anonymized_at": now,
+	}).Error
+}
+
+func toPublicUserEntity(model *database.UserModel, auth *database.AuthModel) entities.PublicUser {
+	return entities.PublicUser{
+		User: entities.User{
+			ID:           model.ID,
+			RefID:        model.RefID,
+			FirstName:    model.FirstName,
+			LastName:     model.LastName,
+			Phone:        model.Phone,
+			AuthRefID:    model.AuthRefID,
+			AnonymizedAt: model.AnonymizedAt,
+			CreatedAt:    model.CreatedAt,
+			UpdatedAt:    model.UpdatedAt,
+		},
+		Email: auth.Email,
 	}
 }

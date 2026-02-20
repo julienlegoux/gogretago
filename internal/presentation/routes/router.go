@@ -24,15 +24,80 @@ func SetupRouter(container *di.Container) *gin.Engine {
 		})
 	})
 
+	// Auth middleware handler function
+	auth := middleware.AuthMiddleware(container.JwtService)
+
 	// Create controllers
 	authController := controllers.NewAuthController(
 		container.RegisterUseCase,
 		container.LoginUseCase,
 	)
 
-	// Register routes
-	api := router.Group("")
+	userController := controllers.NewUserController(
+		container.ListUsersUseCase,
+		container.GetUserUseCase,
+		container.UpdateUserUseCase,
+		container.AnonymizeUserUseCase,
+	)
+
+	driverController := controllers.NewDriverController(
+		container.CreateDriverUseCase,
+	)
+
+	brandController := controllers.NewBrandController(
+		container.ListBrandsUseCase,
+		container.CreateBrandUseCase,
+		container.DeleteBrandUseCase,
+	)
+
+	colorController := controllers.NewColorController(
+		container.ListColorsUseCase,
+		container.CreateColorUseCase,
+		container.UpdateColorUseCase,
+		container.DeleteColorUseCase,
+	)
+
+	cityController := controllers.NewCityController(
+		container.ListCitiesUseCase,
+		container.CreateCityUseCase,
+		container.DeleteCityUseCase,
+	)
+
+	carController := controllers.NewCarController(
+		container.ListCarsUseCase,
+		container.CreateCarUseCase,
+		container.UpdateCarUseCase,
+		container.DeleteCarUseCase,
+	)
+
+	tripController := controllers.NewTripController(
+		container.ListTripsUseCase,
+		container.GetTripUseCase,
+		container.FindTripsUseCase,
+		container.CreateTripUseCase,
+		container.DeleteTripUseCase,
+	)
+
+	inscriptionController := controllers.NewInscriptionController(
+		container.ListInscriptionsUseCase,
+		container.CreateInscriptionUseCase,
+		container.DeleteInscriptionUseCase,
+		container.ListUserInscriptionsUseCase,
+		container.ListTripPassengersUseCase,
+	)
+
+	// Register routes under /api/v1
+	api := router.Group("/api/v1")
+
 	RegisterAuthRoutes(api, authController)
+	RegisterUserRoutes(api, userController, inscriptionController, auth)
+	RegisterDriverRoutes(api, driverController, auth)
+	RegisterBrandRoutes(api, brandController, auth)
+	RegisterColorRoutes(api, colorController, auth)
+	RegisterCityRoutes(api, cityController, auth)
+	RegisterCarRoutes(api, carController, auth)
+	RegisterTripRoutes(api, tripController, inscriptionController, auth)
+	RegisterInscriptionRoutes(api, inscriptionController, auth)
 
 	return router
 }
