@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -28,8 +29,13 @@ func Load() (*Config, error) {
 	port, _ := strconv.Atoi(getEnv("PORT", "3000"))
 	cacheEnabled, _ := strconv.ParseBool(getEnv("CACHE_ENABLED", "false"))
 
+	databaseURL := getEnv("DATABASE_URL", "")
+	if databaseURL == "" {
+		return nil, fmt.Errorf("required environment variable DATABASE_URL is not set")
+	}
+
 	cfg = &Config{
-		DatabaseURL:     getEnv("DATABASE_URL", ""),
+		DatabaseURL:     databaseURL,
 		JWTSecret:       getEnv("JWT_SECRET", ""),
 		JWTExpiresIn:    getEnv("JWT_EXPIRES_IN", "24h"),
 		ResendAPIKey:    getEnv("RESEND_API_KEY", ""),
@@ -46,7 +52,7 @@ func Load() (*Config, error) {
 
 func Get() *Config {
 	if cfg == nil {
-		Load()
+		panic("config not loaded: call config.Load() first")
 	}
 	return cfg
 }
